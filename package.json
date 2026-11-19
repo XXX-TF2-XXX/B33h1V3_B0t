@@ -1,0 +1,30 @@
+{
+  "name": "b33h1v3-b0t",
+  "version": "2.4.0",
+  "description": "B33h1V3_B0t: open-source Solana volume bot. Every trading wallet is logged locally, drained to zero and retired. No hidden fees, no telemetry.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test test/landing.test.js test/lookupTable.test.js test/pumpfun.test.js test/ledger.test.js test/veteran.test.js test/fees_and_jupiter.test.js",
+    "test:simulate": "node test_lifecycle.js simulate",
+    "test:cycle": "node test_lifecycle.js cycle",
+    "start": "node index.js",
+    "recover": "node recover.js"
+  },
+  "type": "module",
+  "keywords": [
+    "solana",
+    "trading",
+    "volume",
+    "bot"
+  ],
+  "author": "t.me/ryptodevc",
+  "license": "ISC",
+  "dependencies": {
+    "@pump-fun/pump-swap-sdk": "^1.19.0",
+    "@solana/spl-token": "^0.4.9",
+    "@solana/web3.js": "^1.98.4",
+    "axios": "^1.7.7",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.5"
+  }
+}

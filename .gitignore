@@ -1,0 +1,32 @@
+# --- secrets: NEVER commit ---
+.env
+.env.*
+!.env.template
+
+# trading-wallet private keys while they hold funds (and any salvage copies)
+active_wallets*.json
+active_wallets*.json.*
+
+# per-machine state and run output
+lookup_tables.json
+logs/
+.shutdown
+*.log
+
+# dependencies / build output
+node_modules/
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+
+# local backups and audits
+_archive/
+_audit*
+
+# editor / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
