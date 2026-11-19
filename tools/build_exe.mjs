@@ -99,7 +99,8 @@ const zipName = `B33h1V3_B0t_V${pkg.version}_windows.zip`;
 const zip = path.join(rel, zipName);
 // Windows' built-in tar (bsdtar) writes a standard zip with forward-slash
 // paths (PowerShell's Compress-Archive writes backslashes some tools reject).
-execFileSync('tar', ['-a', '-c', '-f', zip, '-C', rel, path.basename(out)], { stdio: 'inherit' });
+const winTar = path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'tar.exe');
+execFileSync(winTar, ['-a', '-c', '-f', zip, '-C', rel, path.basename(out)], { stdio: 'inherit' });
 const sha = (f) => crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
 const sums = [path.join(out, 'B33h1V3_B0t.exe'), coreExe, zip]
     .map(f => `${sha(f)}  ${path.basename(f)}`).join('\n') + '\n';
