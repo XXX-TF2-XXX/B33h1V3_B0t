@@ -95,14 +95,16 @@ how *fast* you spend it (buy size × wallets at once ÷ delay).
 
 ---
 
-## Quick start (Windows)
+## Quick start (Windows) — download and go
 
-1. Install **Node.js LTS** — https://nodejs.org/
-2. Install **Python 3** — https://www.python.org/ (tick *"Add python.exe to PATH"*)
-3. Download this repo (green **Code** button → *Download ZIP*) and unzip it.
-4. Double-click **`Start B33h1V3_B0t.bat`**. The first run installs the
-   packages (exact versions from `package-lock.json`).
-5. Fill in **your own** settings:
+1. Download **`B33h1V3_B0t_V2.4.0_windows.zip`** from the
+   [Releases](../../releases) page and unzip it. Nothing else to install —
+   no Python, no Node.js.
+2. Double-click **`B33h1V3_B0t.exe`** (keep `b33h1v3-core.exe` in the same
+   folder). The exes are not code-signed, so Windows may show *"Windows
+   protected your PC"* → **More info** → **Run anyway**. Compare the files
+   against `SHA256SUMS.txt` on the release page, or build them yourself (below).
+3. Fill in **your own** settings:
    - **RPC Endpoint** — free options: a free Helius key
      (`https://mainnet.helius-rpc.com/?api-key=YOUR_KEY`, https://helius.dev)
      or a public RPC such as `https://solana-rpc.publicnode.com`.
@@ -111,11 +113,35 @@ how *fast* you spend it (buy size × wallets at once ÷ delay).
      what you plan to spend (Phantom: Settings → Security & Privacy → Export
      Private Key).
    - **Token to Trade** — the token's mint address.
-6. **Start Bot**. Watch **Total Volume** in the *This Run* box.
+4. **Start Bot**. Watch **Total Volume** in the *This Run* box.
    **Stop Bot** sells everything and sweeps all SOL back before it exits.
 
-Command line instead of the window: edit `.env` (copy `.env.template`), then
-`node index.js`. Recovery: `node recover.js`.
+Tested end to end through the release exe on the keyless public RPC
+`https://solana-rpc.publicnode.com` (2026-11-19: 20 swaps, every wallet
+drained to zero, 2.1 % of volume).
+
+### Run from source instead
+
+Install Node.js LTS and Python 3, then double-click **`Start B33h1V3_B0t.bat`**
+(installs the exact package versions from `package-lock.json` on first run).
+Command line: edit `.env` (copy `.env.template`), then `node index.js`;
+recovery: `node recover.js`.
+
+### Build the exes yourself
+
+The release exes are built from this source by one script, so you can check
+that they contain nothing else:
+
+```bash
+npm ci
+pip install pyinstaller pillow
+npm run build:exe        # -> release/B33h1V3_B0t/ + zip + SHA256SUMS.txt
+```
+
+`b33h1v3-core.exe` is every `.js` file bundled by esbuild into Node's own
+[single executable application](https://nodejs.org/api/single-executable-applications.html)
+format; `B33h1V3_B0t.exe` is `gui.py` packed by PyInstaller. See
+`tools/build_exe.mjs`.
 
 ## Settings
 
@@ -152,7 +178,8 @@ node reclaim_tables.js            # get back SOL locked in lookup tables of old 
 ## Files
 
 ```
-Start B33h1V3_B0t.bat   double-click to run (installs packages on first run)
+Start B33h1V3_B0t.bat   run from source (installs packages on first run)
+tools/build_exe.mjs     builds the download-and-go release exes
 gui.py                  the control window
 index.js                bot: recyclers, veterans, cleanup pass, session report
 solUtils.js             shared core: swaps, sells, drain-to-zero, recovery file

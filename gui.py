@@ -351,6 +351,16 @@ class BotGUI:
         clear_btn = ttk.Button(right, text="Clear Log", command=self.clear_log, width=12)
         clear_btn.grid(row=3, column=0, sticky="e", pady=(6, 0))
 
+    def core_exe(self):
+        return self.script_dir / "b33h1v3-core.exe"
+
+    def engine_command(self, mode: str):
+        """The download-and-go build ships b33h1v3-core.exe (no Node.js needed);
+        a source checkout runs the same code with Node.js."""
+        if self.core_exe().exists():
+            return [str(self.core_exe())] + ([] if mode == "run" else [mode])
+        return ["node", "index.js" if mode == "run" else "recover.js"]
+
     def toggle_key_visibility(self):
         """Toggle private key visibility."""
         if self.show_key_var.get():
@@ -625,9 +635,9 @@ VETERAN_WAIT_MAX={config['VETERAN_WAIT_MAX']}
         self.log("Starting bot...", "INFO")
 
         try:
-            # Start the Node.js process
+            # Start the bot engine (b33h1v3-core.exe if present, else node index.js)
             self.bot_process = subprocess.Popen(
-                ["node", "index.js"],
+                self.engine_command("run"),
                 cwd=str(self.script_dir),
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
@@ -783,10 +793,9 @@ VETERAN_WAIT_MAX={config['VETERAN_WAIT_MAX']}
             messagebox.showerror("Error", "Cannot recover funds while bot is running.\nStop the bot first.")
             return
 
-        # Check if recovery script exists
-        recover_script = self.script_dir / "recover.js"
-        if not recover_script.exists():
-            messagebox.showerror("Error", "recover.js not found!")
+        # Check the recovery engine exists
+        if not (self.core_exe().exists() or (self.script_dir / "recover.js").exists()):
+            messagebox.showerror("Error", "b33h1v3-core.exe (or recover.js) not found next to this program!")
             return
 
         # Check if there are wallets to recover
@@ -813,7 +822,7 @@ VETERAN_WAIT_MAX={config['VETERAN_WAIT_MAX']}
         def run_recovery():
             try:
                 process = subprocess.Popen(
-                    ["node", "recover.js"],
+                    self.engine_command("recover"),
                     cwd=str(self.script_dir),
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,

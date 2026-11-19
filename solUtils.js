@@ -381,25 +381,19 @@ export async function withRetry(fn, { retries = 5, baseMs = 350, shouldRetry = (
     throw lastErr;
 }
 
-// Does this error mean the account genuinely doesn't exist (a real zero), as
-// opposed to a network/rate-limit failure (which must be retried)?
-function isAccountMissing(e) {
-    return /could not find account|account does not exist|invalid param|not found/i.test(String(e?.message || e));
-}
-
 // ============================================================
 // BALANCES  (retry on RPC error; only return 0 when truly empty)
 // ============================================================
 export async function getTokenBalance(ctx, owner) {
     const ata = await getTokenAta(ctx, owner);
+    // Read the raw account and decode the amount ourselves. getAccountInfo
+    // works on every RPC, while getTokenAccountBalance is an "indexed" method
+    // some free public RPCs refuse (publicnode: HTTP 403). A missing account
+    // comes back as null = a real zero; an RPC error throws and is retried.
     return withRetry(async () => {
-        try {
-            const info = await ctx.connection.getTokenAccountBalance(ata);
-            return BigInt(info.value.amount);
-        } catch (e) {
-            if (isAccountMissing(e)) return 0n; // real zero — no token account
-            throw e;                            // RPC/network error — retry
-        }
+        const info = await ctx.connection.getAccountInfo(ata, 'confirmed');
+        if (!info) return 0n;
+        return AccountLayout.decode(info.data.subarray(0, AccountLayout.span)).amount;
     });
 }
 

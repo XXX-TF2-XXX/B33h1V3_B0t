@@ -8,7 +8,8 @@
     "test:simulate": "node test_lifecycle.js simulate",
     "test:cycle": "node test_lifecycle.js cycle",
     "start": "node index.js",
-    "recover": "node recover.js"
+    "recover": "node recover.js",
+    "build:exe": "node tools/build_exe.mjs"
   },
   "type": "module",
   "keywords": [
@@ -26,5 +27,9 @@
     "axios": "^1.7.7",
     "bs58": "^6.0.0",
     "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.10",
+    "postject": "^1.0.0-alpha.6"
   }
 }

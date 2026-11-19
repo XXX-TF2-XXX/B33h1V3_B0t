@@ -30,3 +30,6 @@ _audit*
 .idea/
 Thumbs.db
 .DS_Store
+
+# release build output (npm run build:exe)
+release/
